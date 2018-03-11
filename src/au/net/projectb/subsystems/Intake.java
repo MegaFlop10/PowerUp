@@ -49,8 +49,8 @@ public class Intake extends Subsystem {
 		mWrist.config_kP(0, Constants.kPWrist, 0);
 		mWrist.config_kI(0, Constants.kIWrist, 0);
 		mWrist.config_kD(0, Constants.kDWrist, 0);
-		mWrist.configPeakOutputForward(Constants.kWristMaxUpwardVoltage / 12, 0);
-		mWrist.configPeakOutputReverse(-Constants.kWristMaxDownwardVoltage / 12, 0);
+		mWrist.configPeakOutputForward(Constants.kWristMaxDownwardVoltage / 12, 0);
+		mWrist.configPeakOutputReverse(-Constants.kWristMaxUpwardVoltage / 12, 0);
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class Intake extends Subsystem {
 	public boolean actionStowFromIntake() {
 		boolean actionComplete = mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 		
-		pClaw.set(Value.kForward);
+		pClaw.set(Value.kReverse);
 		
 		if (timer == -1) {
 			timer = 0;
@@ -82,7 +82,7 @@ public class Intake extends Subsystem {
 	 * @return True if action completed.
 	 */
 	public boolean actionIntakeStandby() {
-		pClaw.set(Value.kReverse);
+		pClaw.set(Value.kForward);
 		setWristPosition(Constants.kWristDnPosition);
 		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 	}
@@ -92,7 +92,7 @@ public class Intake extends Subsystem {
 	 * @return True if action completed.
 	 */
 	public boolean actionStow() {
-		pClaw.set(Value.kForward);
+		pClaw.set(Value.kReverse);
 		setWristPosition(Constants.kWristUpPosition);
 		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 	}
@@ -102,13 +102,13 @@ public class Intake extends Subsystem {
 	 * @return True if action completed.
 	 */
 	public boolean actionOpenWhileStowed() {
-		pClaw.set(Value.kReverse);
+		pClaw.set(Value.kForward);
 		setWristPosition(Constants.kWristUpPosition);
 		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 	}
 	
 	public void actionIntakeClose() {
-		pClaw.set(Value.kForward);
+		pClaw.set(Value.kReverse);
 		setWristPosition(Constants.kWristDnPosition);
 	}
 	
@@ -119,8 +119,24 @@ public class Intake extends Subsystem {
 	public boolean actionScoreCube() {
 		setWristPosition(Constants.kWristDnPosition);
 		// wait timer
-		pClaw.set(Value.kReverse);
+		pClaw.set(Value.kForward);
 		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow /* && timer is complete*/;
+	}
+	
+	/**
+	 * Tilt the wrist forward a little, stay closed
+	 */
+	public void actionTiltClosed() {
+		setWristPosition(Constants.kWristTiltPosition);
+		pClaw.set(Value.kReverse);
+	}
+	
+	/**
+	 * Tilt the wrist forward a little, stay open
+	 */
+	public void actionTiltOpen() {
+		setWristPosition(Constants.kWristTiltPosition);
+		pClaw.set(Value.kForward);
 	}
 	
 	/**
@@ -149,9 +165,9 @@ public class Intake extends Subsystem {
 	
 	public void setClawPosition(boolean closed) {
 		if (closed) {
-			pClaw.set(Value.kForward);
-		} else {
 			pClaw.set(Value.kReverse);
+		} else {
+			pClaw.set(Value.kForward);
 		}
 	}
 }

@@ -7,6 +7,7 @@ import au.net.projectb.subsystems.Lift;
 import au.net.projectb.subsystems.Lift.LiftPosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
@@ -50,16 +51,17 @@ public class TeleopController {
 		
 		driveCamera = CameraServer.getInstance().startAutomaticCapture(0);
 		
+		
 		wristCamera = CameraServer.getInstance().startAutomaticCapture(1);
-		cameraServer = CameraServer.getInstance().getServer();
-		
-		driveSink = new CvSink("DriverCam");
-		driveSink.setSource(driveCamera);
-		driveSink.setEnabled(true);
-		
-		wristSink = new CvSink("DriverCam");
-		wristSink.setSource(wristCamera);
-		wristSink.setEnabled(true);
+//		cameraServer = CameraServer.getInstance().getServer();
+//		
+//		driveSink = new CvSink("DriverCam");
+//		driveSink.setSource(driveCamera);
+//		driveSink.setEnabled(true);
+//		
+//		wristSink = new CvSink("WristCam");
+//		wristSink.setSource(wristCamera);
+//		wristSink.setEnabled(true);
 	}
 	
 	/**
@@ -94,7 +96,10 @@ public class TeleopController {
 				
 				if (stick.getRawButton(1)) {
 					intake.actionOpenWhileStowed();
+				} else if (stick.getRawButton(4)) {
+					intake.actionTiltClosed();
 				} else {
+				
 					intake.actionStow();
 				}
 				
@@ -163,6 +168,11 @@ public class TeleopController {
 		}
 		
 		// Driver's buttons
+		SmartDashboard.putBoolean("Forward?", drive.getDirectionIsReversed());
+		
+		SmartDashboard.putNumber("stick X", stick.getX());
+		SmartDashboard.putNumber("stick Y", stick.getY());
+		
 		if (stick.getRawButtonPressed(2)) {
 			drive.reverseDirection();
 		}
@@ -178,7 +188,7 @@ public class TeleopController {
 		if (stick.getRawButtonPressed(8)) {
 			drive.setThrottlePreset(ThrottlePreset.HIGH);
 		}
-		drive.arcadeDrive(stick.getX(), -stick.getY(), (-stick.getThrottle() + 1) / 2);
+		drive.arcadeDrive(-stick.getY(), stick.getX(), (-stick.getThrottle() + 1) / 2);
 	}
 	
 	/**

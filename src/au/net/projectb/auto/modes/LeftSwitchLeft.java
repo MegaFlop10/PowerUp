@@ -32,15 +32,13 @@ public class LeftSwitchLeft extends AutoMode {
 			case 0:
 				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().setMotorPower(0.45, -0.22);
+				Drivetrain.getInstance().actionSensorDrive(0.6, 30, 2.25);
 				break;
 			
 			case 1:
 				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
-				if (DriverStation.getInstance().getMatchTime() < 12) {
-					Intake.getInstance().actionOpenWhileStowed();
-				}
-				Drivetrain.getInstance().setMotorPower(0.0, -0.0);
+				Intake.getInstance().actionOpenWhileStowed();
+				Drivetrain.getInstance().setMotorPower(0.0, 0.0);
 				break;
 		}
 		
@@ -55,7 +53,7 @@ public class LeftSwitchLeft extends AutoMode {
 		
 		switch (stepIndex) {
 			case 0:
-				return DriverStation.getInstance().getMatchTime() < 13;
+				return Drivetrain.getInstance().getEncoderWithinDistance(2.25, 0.1);
 				
 			default:
 				return false;

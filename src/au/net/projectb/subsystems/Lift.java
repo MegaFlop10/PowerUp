@@ -48,10 +48,12 @@ public class Lift extends Subsystem {
 		mElbow.setNeutralMode(NeutralMode.Brake);
 		mElbow.setSelectedSensorPosition(0, 0, 0);
 		
-		mElbow.configContinuousCurrentLimit(40, 0);
-		mElbow.configPeakCurrentLimit(50, 0);
+		mElbow.configContinuousCurrentLimit(30, 0);
+		mElbow.configPeakCurrentLimit(40, 0);
 		mElbow.configPeakCurrentDuration(500, 0);
 		mElbow.enableCurrentLimit(true);
+		
+		mElbow.configOpenloopRamp(0.5, 0);
 		
 		liftPositionPreset = LiftPosition.MANUAL;
 		
@@ -139,6 +141,8 @@ public class Lift extends Subsystem {
 			mElbow.setSelectedSensorPosition(0, 0, 0);
 		}
 		if (Intake.getInstance().getWristIsDown() && getArmIsInIllegalPos()) {
+			mElbow.set(ControlMode.PercentOutput, 0.0);
+		} else if (!zeroingHallEffect.get() && setpoint < getElbowPosition()) {
 			mElbow.set(ControlMode.PercentOutput, 0.0);
 		} else {
 			mElbow.set(ControlMode.Position, setpoint);

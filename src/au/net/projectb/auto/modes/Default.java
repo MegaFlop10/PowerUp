@@ -28,11 +28,11 @@ public class Default extends AutoMode {
 		switch (stepIndex) {
 			case 0:
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().arcadeDrive(0.2, 0.0, 1.0);
+				Drivetrain.getInstance().actionSensorDrive(0.2, 0.0, 2.6);
 				break;
 				
 			case 1: // Should not be reached
-				Intake.getInstance().actionOpenWhileStowed();
+				Intake.getInstance().actionStow();
 				Drivetrain.getInstance().arcadeDrive(0, 0, 0);
 				break;
 		}

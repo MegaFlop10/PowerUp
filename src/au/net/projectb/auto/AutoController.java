@@ -15,6 +15,7 @@ public class AutoController {
 	FieldPosition scalePosition;
 	
 	AutoSelection selectedAuto;
+	boolean runTwoCube;
 	AutoMode runningAuto;
 	int currentStep;
 	
@@ -33,6 +34,8 @@ public class AutoController {
 		
 		PREFER_SWITCH,
 		PREFER_SCALE,
+		
+		TRY_TWOCUBE,
 	}
 	
 	public AutoController() {
@@ -50,12 +53,16 @@ public class AutoController {
 		autoSelector.addObject("Prefer Scale", AutoSelection.PREFER_SCALE);
 		autoSelector.addObject("Switch", AutoSelection.ONLY_SWITCH);
 		autoSelector.addObject("Scale", AutoSelection.ONLY_SCALE);
+		autoSelector.addObject("Test Two Cube", AutoSelection.TRY_TWOCUBE);
+		
+		SmartDashboard.setDefaultBoolean("Two Cube Auto", true);
 		
 		SmartDashboard.putData("Auto Selector", autoSelector);
 	}
 	
 	public void init() {
 		Drivetrain.getInstance().zeroGyro();
+		Drivetrain.getInstance().setEncoderCounts(0);
 		
 		while (DriverStation.getInstance().getGameSpecificMessage() == null) {
 			// wait for it to come in
@@ -84,9 +91,11 @@ public class AutoController {
 			scalePosition = FieldPosition.RIGHT;
 		}
 		
+		runTwoCube = SmartDashboard.getBoolean("Two Cube Auto", true);
+		
 		selectedAuto = autoSelector.getSelected();
 		runningAuto = evaluateAutoSelection(selectedAuto);
-		
+				
 		runningAuto.setFieldPositions(startPosition, switchPosition, scalePosition);
 		currentStep = 0;
 	}
@@ -107,7 +116,7 @@ public class AutoController {
 	 */
 	public AutoMode evaluateAutoSelection(AutoSelection auto) {
 		switch (auto) {
-			case PREFER_SWITCH:
+			case PREFER_SWITCH:  // Stay on the same side
 				if (switchPosition == startPosition) {
 					if (switchPosition == FieldPosition.LEFT) {
 						return new LeftSwitchLeft();
@@ -124,7 +133,11 @@ public class AutoController {
 				
 				} else if (scalePosition == startPosition) {
 					if (scalePosition == FieldPosition.LEFT) {
-						return new LeftScaleLeft();
+						if (runTwoCube) {
+							return new LeftScaleLeftScaleLeft();
+						} else {
+							return new LeftScaleLeft();
+						}
 					} else {
 						return new RightScaleRight();
 					}
@@ -132,10 +145,14 @@ public class AutoController {
 					return new Default();
 				}
 				
-			case PREFER_SCALE:
+			case PREFER_SCALE:  // Stay on the same side
 				if (scalePosition == startPosition) {
-					if (switchPosition == FieldPosition.LEFT) {
-						return new LeftScaleLeft();
+					if (scalePosition == FieldPosition.LEFT) {
+						if (runTwoCube) {
+							return new LeftScaleLeftScaleLeft();
+						} else {
+							return new LeftScaleLeft();
+						}
 					} else {
 						return new RightScaleRight();
 					}
@@ -178,15 +195,28 @@ public class AutoController {
 			case ONLY_SCALE:
 				if (scalePosition == startPosition) {
 					if (scalePosition == FieldPosition.LEFT) {
-						return new LeftScaleLeft();
+						if (runTwoCube) {
+							return new LeftScaleLeftScaleLeft();
+						} else {
+							return new LeftScaleLeft();
+						}
 					} else {
 						return new RightScaleRight();
 					}
 				
+				} else if (startPosition == FieldPosition.LEFT) {
+					return new LeftScaleRight();
+				} else if (startPosition == FieldPosition.RIGHT) {
+					return new RightScaleLeft();
 				} else {
 					return new Default();
 				}
 				
+			case TRY_TWOCUBE:
+				if (startPosition == FieldPosition.LEFT) {
+					return new LeftScaleLeftScaleLeft();
+				}
+						
 			default:
 				return new Default();
 		}

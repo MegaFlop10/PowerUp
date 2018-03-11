@@ -7,7 +7,7 @@ import au.net.projectb.subsystems.Lift;
 import au.net.projectb.subsystems.Lift.LiftPosition;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class LeftScaleLeft extends AutoMode {
+public class LeftScaleRight extends AutoMode {
 	FieldPosition startPosition;  // Robot start position
 	FieldPosition switchPosition;
 	FieldPosition scalePosition;
@@ -32,22 +32,34 @@ public class LeftScaleLeft extends AutoMode {
 			case 0:
 				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionSensorDrive(0.75, 0.0, 7.5);
+				Drivetrain.getInstance().actionSensorDrive(0.75, 0.0, 5.5);
 				break;
 			
 			case 1:
-				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
+				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionSensorDrive(0.75, 0.0, 7.5);
+				Drivetrain.getInstance().actionGyroTurn(90);
 				break;
 				
 			case 2:
 				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionGyroTurn(90);
+				Drivetrain.getInstance().actionSensorDrive(0.5, 90.0, 5.125);
 				break;
 				
 			case 3:
+				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
+				Intake.getInstance().actionStow();
+				Drivetrain.getInstance().actionGyroTurn(-10);
+				break;
+				
+			case 4:
+				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
+				Intake.getInstance().actionStow();
+				Drivetrain.getInstance().actionSensorDrive(0.4, -10, 1.4);
+				break;
+				
+			case 5:
 				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
 				if (Intake.getInstance().getWristPosition() < 200) {
 					Intake.getInstance().actionTiltClosed();
@@ -55,8 +67,6 @@ public class LeftScaleLeft extends AutoMode {
 					Intake.getInstance().actionTiltOpen();
 				}
 				Drivetrain.getInstance().setMotorPower(0, 0);
-				break;
-				
 		}
 		
 	}
@@ -69,14 +79,28 @@ public class LeftScaleLeft extends AutoMode {
 	public boolean getStepIsCompleted(int stepIndex) {
 		
 		switch (stepIndex) {
-			case 0:
-				return Drivetrain.getInstance().getEncoderDistance() > 4;
+			case 0:  // Drive to 5.8m and go to next when the encoder resets
+				return Drivetrain.getInstance().getEncoderWithinDistance(5.5, 0.1);
 				
 			case 1:
-				return Drivetrain.getInstance().getEncoderWithinDistance(7.5, 0.1);
-			
+				if (Drivetrain.getInstance().getAngleWithinRange(90, 6)) {
+					Drivetrain.getInstance().setEncoderCounts(0);
+					return true;
+				}
+				return false;
+				
 			case 2:
-				return Drivetrain.getInstance().getAngleWithinRange(90, 3);
+				return Drivetrain.getInstance().getEncoderWithinDistance(5.125, 0.1);
+				
+			case 3:
+				if (Drivetrain.getInstance().getAngleWithinRange(-10, 6)) {
+					Drivetrain.getInstance().setEncoderCounts(0);
+					return true;
+				}
+				return false;
+				
+			case 4:
+				return Drivetrain.getInstance().getEncoderWithinDistance(1.4, 0.1);
 				
 			default:
 				return false;

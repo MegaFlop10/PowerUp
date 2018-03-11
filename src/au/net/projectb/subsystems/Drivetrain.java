@@ -21,8 +21,8 @@ public class Drivetrain extends Subsystem {
 	TalonSRX mLeftMaster, mLeftSlaveA, mLeftSlaveB;
 	TalonSRX mRightMaster, mRightSlaveA, mRightSlaveB;
 	
-//	AHRS navx;
-	ADXRS450_Gyro navx;  // FIRST Choice gyro, only called navx bc i'm lazy
+	AHRS navx;
+//	ADXRS450_Gyro navx;  // FIRST Choice gyro, only called navx bc i'm lazy
 	
 	boolean driveDirectionIsForwards;
 	double throttlePreset;
@@ -42,8 +42,8 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	private Drivetrain() {
-//		navx = new AHRS(Port.kMXP);
-		navx = new ADXRS450_Gyro();
+		navx = new AHRS(Port.kMXP);
+//		navx = new ADXRS450_Gyro();
 		navx.reset();
 		
 		// Left Side
@@ -57,32 +57,38 @@ public class Drivetrain extends Subsystem {
 		mLeftMaster.configPeakCurrentLimit(60, 0);
 		mLeftMaster.configPeakCurrentDuration(100, 0);
 		mLeftMaster.enableCurrentLimit(true);
-//		mLeftMaster.enableVoltageCompensation(true);
+		mLeftMaster.enableVoltageCompensation(true);
 		
 		mLeftMaster.setNeutralMode(Constants.kDriveNeutralMode);
 		mLeftSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
 		mLeftSlaveB.setNeutralMode(Constants.kDriveNeutralMode);
+		mLeftMaster.setInverted(false);
+		mLeftSlaveA.setInverted(false);
+		mLeftSlaveB.setInverted(false);
 		
 		mLeftSlaveA.set(ControlMode.Follower, Constants.kLeftDriveMaster);
 		mLeftSlaveB.set(ControlMode.Follower, Constants.kLeftDriveMaster);
 		
 		// Right Side
 		mRightMaster = new TalonSRX(Constants.kRightDriveMaster);	// CIM
-		mRightSlaveA = new TalonSRX(Constants.kRightDriveSlaveA);	// CIM
-		mRightSlaveB = new TalonSRX(Constants.kRightDriveSlaveB);	// MiniCIM
+		mRightSlaveA = new TalonSRX(Constants.kRightDriveSlaveA);	// MiniCIM
+		mRightSlaveB = new TalonSRX(Constants.kRightDriveSlaveB);	// CIM
 		
 		mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		mRightMaster.setSensorPhase(true);
 		mRightMaster.configOpenloopRamp(Constants.kDriveVoltageRamp, 0);
 		mRightMaster.configContinuousCurrentLimit(40, 0);
 		mRightMaster.configPeakCurrentLimit(60, 0);
 		mRightMaster.configPeakCurrentDuration(100, 0);
 		mRightMaster.enableCurrentLimit(true);
-//		mRightMaster.enableVoltageCompensation(true);
-		// Interestingly enough, this side doesn't need to be reversed...
+		mRightMaster.enableVoltageCompensation(true);
 		
 		mRightMaster.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveB.setNeutralMode(Constants.kDriveNeutralMode);
+		mRightMaster.setInverted(true);
+		mRightSlaveA.setInverted(true);
+		mRightSlaveB.setInverted(true);
 		
 		mRightSlaveA.set(ControlMode.Follower, Constants.kRightDriveMaster);
 		mRightSlaveB.set(ControlMode.Follower, Constants.kRightDriveMaster);
@@ -102,15 +108,17 @@ public class Drivetrain extends Subsystem {
 			throttle = throttlePreset;
 		}
 		
-		double leftPower = (power + steering) * throttle;
-		double rightPower = (power - steering) * throttle;
+		double leftPower;
+		double rightPower;
+		leftPower = (power + steering) * throttle;
+		rightPower = (power - steering) * throttle;
 		
 		if (driveDirectionIsForwards) {
 			setMotorPower(leftPower, rightPower);
 		} else {
-			setMotorPower(-rightPower, -leftPower);  // Reverses steering and direction
+			setMotorPower(-rightPower, -leftPower);  // Reverses direction
 		}
-				
+		
 		SmartDashboard.putNumber("Throttle", throttle);
 		SmartDashboard.putNumber("LeftPower", leftPower);
 		SmartDashboard.putNumber("RightPower", rightPower);
@@ -123,8 +131,12 @@ public class Drivetrain extends Subsystem {
 		driveDirectionIsForwards = !driveDirectionIsForwards;
 	}
 	
+	public boolean getDirectionIsReversed() {
+		return driveDirectionIsForwards;
+	}
+	
 	/**
-	 * Wrapper for setting motor powers. Only Drivetrain can do so directly.
+	 * Wrapper for setting motor powers.
 	 * @param left
 	 * @param right
 	 */
@@ -132,7 +144,7 @@ public class Drivetrain extends Subsystem {
 		mLeftMaster.set(ControlMode.PercentOutput, left);
 		mLeftSlaveA.follow(mLeftMaster);
 		mLeftSlaveB.follow(mLeftMaster);
-		mRightMaster.set(ControlMode.PercentOutput, right);
+		mRightMaster.set(ControlMode.PercentOutput, right);  // TODO: Reverse this
 		mRightSlaveA.follow(mRightMaster);
 		mRightSlaveB.follow(mRightMaster);
 	}
@@ -149,12 +161,56 @@ public class Drivetrain extends Subsystem {
 				throttlePreset = 1.00;
 				break;
 			default: // Also handles ANALOGUE
-				throttlePreset = -1; // see line 86
+				throttlePreset = -1; // see line 90
 		}
 	}
 	
 	public double getAngle() {
 		return navx.getAngle();
+	}
+	
+	/**
+	 * 
+	 * @param angle in degrees
+	 * @param threshRange in degrees +/-
+	 * @return true if angle of gyro is within the range around the set angle
+	 */
+	public boolean getAngleWithinRange(double angle, double threshRange) {
+		return Math.abs(angle - getAngle()) < threshRange; 
+	}
+	
+	/**
+	 * Gets distance covered by the encoder. On the right side of the robot.
+	 * @return distance in counts (2048) 
+	 */
+	public int getEncoderCounts() {
+		return mRightMaster.getSelectedSensorPosition(0);
+	}
+	
+	/**
+	 * Converts getEncoderCounts to metres.
+	 * @return distance covered by the robot in metres.
+	 */
+	public double getEncoderDistance() {
+		return .00006329 * getEncoderCounts(); 
+	}
+	
+	/**
+	 * Set the encoder to a position
+	 * @param counts
+	 */
+	public void setEncoderCounts(int counts) {
+		mRightMaster.setSelectedSensorPosition(counts,  0,  0);
+	}
+	
+	/**
+	 * 
+	 * @param distance in m
+	 * @param threshRange in m +/-
+	 * @return
+	 */
+	public boolean getEncoderWithinDistance(double distance, double threshRange) {
+		return Math.abs(distance - getEncoderDistance()) < threshRange;
 	}
 	
 	public void zeroGyro() {
@@ -188,11 +244,31 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	/**
-	 * Point turn to an absolute gyro angle TODO: Implement gyro and its zeroing
-	 * @param targetAngle
+	 * Drives using encoder and gyro.
+	 * Set power to 0 to point to a heading.
+	 * 
+	 * @param maxPower (0-1, no negatives)
+	 * @param heading in degrees
+	 * @param distance in metres
+	 * @return true if within 0.01m (1cm) of target
 	 */
-//	public void actionPointTurn(double targetAngle) {
-//		double turnPower = (navx.getAngle() - targetAngle) * Constants.kPPointTurn;
-//		arcadeDrive(0, turnPower, 1);
-//	}
+	public boolean actionSensorDrive(double maxPower, double heading, double distance) {
+		double steering = (heading - getAngle()) * Constants.kPGyroSteering;
+		double power = (distance - getEncoderDistance()) * Constants.kPDistancePower;
+		if (power >= 0 && power > maxPower) {
+			power = maxPower;
+		} else if (power < 0 && power < -maxPower) {
+			power = -maxPower;
+		}
+		
+		arcadeDrive(power, steering, 1);
+		return getEncoderWithinDistance(distance, 0.01);
+	}
+	
+	public boolean actionGyroTurn(double heading) {
+		double steering = (heading - getAngle()) * Constants.kPGyroSteering;  // .005 for wood
+		
+		arcadeDrive(0, steering, 1);
+		return getAngleWithinRange(90, 3);
+	}
 }

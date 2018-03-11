@@ -7,6 +7,7 @@ import au.net.projectb.subsystems.Lift;
 import au.net.projectb.subsystems.Lift.LiftPosition;
 import edu.wpi.first.wpilibj.DriverStation;
 
+@Deprecated
 public class Scale extends AutoMode {
 	FieldPosition startPosition;  // Robot start position
 	FieldPosition switchPosition;

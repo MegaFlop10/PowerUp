@@ -3,7 +3,9 @@ package au.net.projectb;
 import au.net.projectb.auto.AutoController;
 import au.net.projectb.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
@@ -21,8 +23,7 @@ public class Robot extends IterativeRobot {
 		auto = new AutoController();
 		tuner = new Tuning();
 		
-		SmartDashboard.setDefaultNumber("CAN ID", 1);
-		SmartDashboard.setDefaultNumber("Power", 0);
+		Drivetrain.getInstance().setEncoderCounts(0);
 		}
 
 	@Override
@@ -43,7 +44,5 @@ public class Robot extends IterativeRobot {
 //		compressor.stop(); // Debugging at this point
 		teleop.run();
 //		tuner.run();
-//		SmartDashboard.putNumber("Gyro", Drivetrain.getInstance().getAngle());
-//		Drivetrain.getInstance().driveMotor((int) SmartDashboard.getNumber("CAN ID", 1), SmartDashboard.getNumber("Power", 0));
 	}
 }

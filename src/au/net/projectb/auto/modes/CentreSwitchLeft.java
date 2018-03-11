@@ -32,21 +32,25 @@ public class CentreSwitchLeft extends AutoMode {
 			case 0:
 				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().setMotorPower(0.3, -0.6);
+				Drivetrain.getInstance().actionSensorDrive(0.6, 0.0, 2.0);
 				break;
 				
 			case 1:
 				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().setMotorPower(0.6, -0.1);
+				Drivetrain.getInstance().actionSensorDrive(0.6, -60.0, 3.0);
 				break;
 				
 			case 2:
 				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
-				if (DriverStation.getInstance().getMatchTime() < 12) {
-					Intake.getInstance().actionOpenWhileStowed();
-				}
-				Drivetrain.getInstance().setMotorPower(0.2, -0.2);
+				Intake.getInstance().actionStow();
+				Drivetrain.getInstance().actionSensorDrive(0.4, 0.0, 3.75);
+				break;
+				
+			case 3:
+				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
+				Intake.getInstance().actionOpenWhileStowed();
+				Drivetrain.getInstance().arcadeDrive(0, 0, 0);
 				break;
 		}
 		
@@ -61,10 +65,13 @@ public class CentreSwitchLeft extends AutoMode {
 		
 		switch (stepIndex) {
 			case 0:
-				return Drivetrain.getInstance().getAngle() <= -45;
+				return Drivetrain.getInstance().getEncoderDistance() >= 0.125;
 				
 			case 1:
-				return Drivetrain.getInstance().getAngle() >= -25;
+				return Drivetrain.getInstance().getEncoderWithinDistance(3.0, 0.1);
+				
+			case 2:
+				return Drivetrain.getInstance().getEncoderWithinDistance(3.75, 0.1);
 				
 			default:
 				return false;

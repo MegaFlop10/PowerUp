@@ -31,7 +31,8 @@ public class Constants {
 	// Intake Wrist
 	// Encoder is on output shaft. Positive is outwards.
 	public static int kWristUpPosition = -200;
-	public static int kWristDnPosition = 1100;
+	public static int kWristTiltPosition = 300;
+	public static int kWristDnPosition = 1150;
 	
 	public static double kPWrist = 1.2;
 	public static double kIWrist = 0.0;
@@ -47,7 +48,7 @@ public class Constants {
 	// Has a 84:18 gear reduction after encoder. Positive is outwards.
 	public static int kElbowCountsPerRev = 19115; // Actually 19114.666...
 	
-	public static int kElbowGroundPosition = 0;
+	public static int kElbowGroundPosition = -200;
 	public static int kElbowSwitchPosition = 2000;
 	public static int kElbowScaleLoPosition = 4000;
 	public static int kElbowScaleMiPosition = 5000;
@@ -64,14 +65,18 @@ public class Constants {
 	
 	public static double kElbowManualDeadzone = 0.1;
 	
-	public static double kElbowMaxUpwardVoltage = 12.0; // +/- of 0
+	public static double kElbowMaxUpwardVoltage = 10.0; // +/- of 0
 	public static double kElbowMaxDownwardVoltage = 6.0; // Stops the arm from smashing into the battery
 	
 	// Drive Settings
 	public static double kDriveVoltageRamp = 0.125;
 	public static NeutralMode kDriveNeutralMode = NeutralMode.Brake;
 	
-	public static double kPPointTurn = 0.0;
+	public static double kWheelDiameter = 6.125;  // Inches
+	public static int kDriveEncoderCountsPerRotation = 8192;
+	
+	public static double kPGyroSteering = 0.008;  // In % per degree (.025 for carpet, .005 for wood)
+	public static double kPDistancePower = 0.7;  // In % per metre (1=100%)
 	
 	// System Attributes
 	public static int kMagEncoderCountsPerRev = 4096;
