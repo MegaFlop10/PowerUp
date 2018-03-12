@@ -75,7 +75,7 @@ public class Constants {
 	public static double kWheelDiameter = 6.125;  // Inches
 	public static int kDriveEncoderCountsPerRotation = 8192;
 	
-	public static double kPGyroSteering = 0.008;  // In % per degree (.025 for carpet, .005 for wood)
+	public static double kPGyroSteering = 0.008;  // In % per degree (.025 for carpet, .005 for wood, .008 for field carpet)
 	public static double kPDistancePower = 0.7;  // In % per metre (1=100%)
 	
 	// System Attributes

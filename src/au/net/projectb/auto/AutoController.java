@@ -1,6 +1,8 @@
 package au.net.projectb.auto;
 
 import au.net.projectb.subsystems.Drivetrain;
+import au.net.projectb.subsystems.Intake;
+import au.net.projectb.subsystems.Lift;
 import au.net.projectb.auto.modes.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -107,6 +109,13 @@ public class AutoController {
 		} else {
 			currentStep++;
 		}
+		
+		SmartDashboard.putNumber("Auto Gyro", Drivetrain.getInstance().getAngle());
+		SmartDashboard.putNumber("Auto Enco", Drivetrain.getInstance().getEncoderDistance());
+		SmartDashboard.putNumber("Auto Arm", Lift.getInstance().getElbowPosition());
+		SmartDashboard.putNumber("Auto Wrst", Intake.getInstance().getWristPosition());
+		SmartDashboard.putNumber("Auto Step", currentStep);
+		
 	}
 	
 	/**
