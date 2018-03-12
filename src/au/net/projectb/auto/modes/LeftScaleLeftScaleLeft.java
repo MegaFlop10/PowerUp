@@ -44,7 +44,7 @@ public class LeftScaleLeftScaleLeft extends AutoMode {
 			case 2:
 				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
 				Intake.getInstance().actionOpenWhileStowed();
-				Drivetrain.getInstance().actionSensorDrive(0.4, 5.0, -0.5);
+				Drivetrain.getInstance().actionSensorDrive(0.4, 25.0, -0.5);
 				break;
 				
 			case 3:
@@ -113,7 +113,7 @@ public class LeftScaleLeftScaleLeft extends AutoMode {
 				return Drivetrain.getInstance().getEncoderWithinDistance(-0.5, 0.1);
 				
 			case 3:
-				if (Drivetrain.getInstance().getAngleWithinRange(155.0, 5.0)) {
+				if (Drivetrain.getInstance().getAngleWithinRange(155.0, 5.0) && Lift.getInstance().getElbowPosition() == 0) {
 					Drivetrain.getInstance().setEncoderCounts(0);
 					return true;
 				}

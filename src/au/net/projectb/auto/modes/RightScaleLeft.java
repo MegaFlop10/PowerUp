@@ -80,7 +80,7 @@ public class RightScaleLeft extends AutoMode {
 	public boolean getStepIsCompleted(int stepIndex) {
 		
 		switch (stepIndex) {
-			case 0:  // Drive to 5.8m and go to next when the encoder resets
+			case 0:  // Drive to 5.5m and go to next when the encoder resets
 				return Drivetrain.getInstance().getEncoderWithinDistance(5.5, 0.1);
 				
 			case 1:

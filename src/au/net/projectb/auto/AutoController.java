@@ -116,7 +116,7 @@ public class AutoController {
 	 */
 	public AutoMode evaluateAutoSelection(AutoSelection auto) {
 		switch (auto) {
-			case PREFER_SWITCH:  // Stay on the same side
+			case PREFER_SWITCH:
 				if (switchPosition == startPosition) {
 					if (switchPosition == FieldPosition.LEFT) {
 						return new LeftSwitchLeft();
@@ -141,11 +141,13 @@ public class AutoController {
 					} else {
 						return new RightScaleRight();
 					}
+				} else if (startPosition == FieldPosition.LEFT){
+					return new LeftScaleRight();
 				} else {
-					return new Default();
+					return new RightScaleLeft();
 				}
 				
-			case PREFER_SCALE:  // Stay on the same side
+			case PREFER_SCALE: // Stay side
 				if (scalePosition == startPosition) {
 					if (scalePosition == FieldPosition.LEFT) {
 						if (runTwoCube) {

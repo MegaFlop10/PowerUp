@@ -71,7 +71,7 @@ public class CentreSwitchLeft extends AutoMode {
 				return Drivetrain.getInstance().getEncoderWithinDistance(3.0, 0.1);
 				
 			case 2:
-				return Drivetrain.getInstance().getEncoderWithinDistance(3.75, 0.1);
+				return Drivetrain.getInstance().getEncoderWithinDistance(3.75, 0.1) || DriverStation.getInstance().getMatchTime() < 5.0;
 				
 			default:
 				return false;
