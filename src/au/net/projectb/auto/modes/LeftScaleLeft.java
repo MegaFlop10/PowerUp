@@ -76,7 +76,7 @@ public class LeftScaleLeft extends AutoMode {
 				return Drivetrain.getInstance().getEncoderWithinDistance(7.5, 0.1);
 			
 			case 2:
-				return Drivetrain.getInstance().getAngleWithinRange(90, 3);
+				return Drivetrain.getInstance().getAngleWithinRange(90, 6);
 				
 			default:
 				return false;

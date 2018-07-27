@@ -66,8 +66,7 @@ public class RightScaleLeft extends AutoMode {
 				} else {
 					Intake.getInstance().actionTiltOpen();
 				}
-				Drivetrain.getInstance().setMotorPower(0.0, 0.0);
-				break;
+				Drivetrain.getInstance().setMotorPower(0, 0);
 		}
 		
 	}
@@ -86,7 +85,9 @@ public class RightScaleLeft extends AutoMode {
 			case 1:
 				if (Drivetrain.getInstance().getAngleWithinRange(-90, 6)) {
 					Drivetrain.getInstance().setEncoderCounts(0);
-					return true;
+					if (Drivetrain.getInstance().getEncoderWithinDistance(0.0, 0.1)) {
+						return true;
+					}
 				}
 				return false;
 				

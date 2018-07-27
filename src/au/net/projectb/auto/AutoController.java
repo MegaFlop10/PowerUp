@@ -38,6 +38,8 @@ public class AutoController {
 		PREFER_SCALE,
 		
 		TRY_TWOCUBE,
+		
+		LEFT_SCALE_ONLY,
 	}
 	
 	public AutoController() {
@@ -56,10 +58,18 @@ public class AutoController {
 		autoSelector.addObject("Switch", AutoSelection.ONLY_SWITCH);
 		autoSelector.addObject("Scale", AutoSelection.ONLY_SCALE);
 		autoSelector.addObject("Test Two Cube", AutoSelection.TRY_TWOCUBE);
+		autoSelector.addObject("Left Scale Only", AutoSelection.LEFT_SCALE_ONLY);
 		
 		SmartDashboard.setDefaultBoolean("Two Cube Auto", true);
 		
 		SmartDashboard.putData("Auto Selector", autoSelector);
+		
+		SmartDashboard.putNumber("Auto Gyro", Drivetrain.getInstance().getAngle());
+		SmartDashboard.putNumber("Auto Enco", Drivetrain.getInstance().getEncoderDistance());
+		SmartDashboard.putNumber("Auto Arm", Lift.getInstance().getElbowPosition());
+		SmartDashboard.putNumber("Auto Wrst", Intake.getInstance().getWristPosition());
+		currentStep = 0;
+		SmartDashboard.putNumber("Auto Step", currentStep);
 	}
 	
 	public void init() {
@@ -227,7 +237,18 @@ public class AutoController {
 				if (startPosition == FieldPosition.LEFT) {
 					return new LeftScaleLeftScaleLeft();
 				}
-						
+			
+			case LEFT_SCALE_ONLY:
+				if (scalePosition == FieldPosition.LEFT) {
+					if (runTwoCube) {
+						return new LeftScaleLeftScaleLeft();
+					} else {
+						return new LeftScaleLeft();
+					}
+				} else {
+					return new Default();
+				}
+				
 			default:
 				return new Default();
 		}

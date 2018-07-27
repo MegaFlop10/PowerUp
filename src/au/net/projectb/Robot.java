@@ -24,6 +24,8 @@ public class Robot extends IterativeRobot {
 		tuner = new Tuning();
 		
 		Drivetrain.getInstance().setEncoderCounts(0);
+		Drivetrain.getInstance().zeroGyro();
+		
 		}
 
 	@Override
@@ -44,5 +46,7 @@ public class Robot extends IterativeRobot {
 //		compressor.stop(); // Debugging at this point
 		teleop.run();
 //		tuner.run();
+//		SmartDashboard.putNumber("Gyro", Drivetrain.getInstance().getAngle());
+//		Drivetrain.getInstance().actionGyroTurn(155);
 	}
 }

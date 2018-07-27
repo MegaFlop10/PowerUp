@@ -38,13 +38,13 @@ public class LeftScaleLeftScaleLeft extends AutoMode {
 			case 1:
 				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionSensorDrive(0.4, 25.0, 7.0);
+				Drivetrain.getInstance().actionSensorDrive(0.4, 25.0, 7.1);
 				break;
 				
 			case 2:
 				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
 				Intake.getInstance().actionOpenWhileStowed();
-				Drivetrain.getInstance().actionSensorDrive(0.4, 25.0, -0.5);
+				Drivetrain.getInstance().actionSensorDrive(0.4, 25.0, -0.6);
 				break;
 				
 			case 3:
@@ -56,7 +56,7 @@ public class LeftScaleLeftScaleLeft extends AutoMode {
 			case 4:
 				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
 				Intake.getInstance().actionIntakeStandby();
-				Drivetrain.getInstance().actionSensorDrive(0.15, 155.0, 0.65);
+				Drivetrain.getInstance().actionSensorDrive(0.2, 155.0, 1.1);
 				break;
 				
 			case 5:
@@ -66,25 +66,29 @@ public class LeftScaleLeftScaleLeft extends AutoMode {
 				} else {
 					Intake.getInstance().actionStow();
 				}
-				Drivetrain.getInstance().actionSensorDrive(0.2, 155.0, 0.0);
+				Drivetrain.getInstance().actionSensorDrive(0.2, 165.0, 0.3);
 				break;
 			
 			case 6:
-				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
+				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionGyroTurn(20.0);
+				Drivetrain.getInstance().actionGyroTurn(15.0);
 				break;
 				
 			case 7:
-				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
-				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionSensorDrive(0.6, 20.0, 1.0);
+				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
+				if (Lift.getInstance().getArmIsInIllegalPos()) {
+					Intake.getInstance().actionStow();
+				} else {
+					Intake.getInstance().actionIntakeClose();
+				}
+				Drivetrain.getInstance().actionSensorDrive(0.6, 15.0, 0.7);
 				break;
 				
 			case 8:
-				Lift.getInstance().actionMoveTo(LiftPosition.GROUND);
-				Intake.getInstance().actionOpenWhileStowed();
-				Drivetrain.getInstance().actionSensorDrive(0.4, 20.0, 0.0);
+				Lift.getInstance().actionMoveTo(LiftPosition.SCALE_HI);
+				Intake.getInstance().actionIntakeStandby();
+				Drivetrain.getInstance().actionSensorDrive(0.4, 20.0, 0.7);
 				break;
 				
 		}
@@ -103,37 +107,37 @@ public class LeftScaleLeftScaleLeft extends AutoMode {
 				return Drivetrain.getInstance().getEncoderWithinDistance(4.5, 0.1);
 				
 			case 1:
-				if (Drivetrain.getInstance().getEncoderWithinDistance(7.0, 0.1)) {
+				if (Drivetrain.getInstance().getEncoderWithinDistance(7.1, 0.1)) {
 					Drivetrain.getInstance().setEncoderCounts(0);
 					return true;
 				}
 				return false;
 			
 			case 2:
-				return Drivetrain.getInstance().getEncoderWithinDistance(-0.5, 0.1);
+				return Drivetrain.getInstance().getEncoderWithinDistance(-0.6, 0.1);
 				
 			case 3:
-				if (Drivetrain.getInstance().getAngleWithinRange(155.0, 5.0) && Lift.getInstance().getElbowPosition() == 0) {
+				if (Drivetrain.getInstance().getAngle() > 150.0 && Lift.getInstance().getElbowPosition() <= 1000) {
 					Drivetrain.getInstance().setEncoderCounts(0);
 					return true;
 				}
 				return false;
 				
 			case 4:
-				return Drivetrain.getInstance().getEncoderWithinDistance(0.65, 0.1) || DriverStation.getInstance().getMatchTime() <= 5.0;
+				return Drivetrain.getInstance().getEncoderWithinDistance(1.1, 0.1) || DriverStation.getInstance().getMatchTime() <= 4.0;
 				
 			case 5:
-				return Drivetrain.getInstance().getEncoderWithinDistance(0.0, 0.1);
+				return Drivetrain.getInstance().getEncoderWithinDistance(0.3, 0.1);
 				
 			case 6:
-				if (Drivetrain.getInstance().getAngleWithinRange(20.0, 5.0)) {
+				if (Drivetrain.getInstance().getAngleWithinRange(15.0, 10.0)) {
 					Drivetrain.getInstance().setEncoderCounts(0);
 					return true;
 				}
 				return false;
 				
 			case 7:
-				return Drivetrain.getInstance().getEncoderWithinDistance(1.0, 0.1);
+				return Drivetrain.getInstance().getEncoderWithinDistance(0.7, 0.1)/** || DriverStation.getInstance().getMatchTime() <= 0.5**/;
 				
 			default:
 				return false;

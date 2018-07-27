@@ -170,4 +170,8 @@ public class Intake extends Subsystem {
 			pClaw.set(Value.kForward);
 		}
 	}
+	
+	public void zeroWristEncoder() {
+		mWrist.setSelectedSensorPosition(0, 0, 0);
+	}
 }

@@ -44,7 +44,7 @@ public class CentreSwitchLeft extends AutoMode {
 			case 2:
 				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
 				Intake.getInstance().actionStow();
-				Drivetrain.getInstance().actionSensorDrive(0.4, 0.0, 3.75);
+				Drivetrain.getInstance().actionSensorDrive(0.4, 0.0, 3.6);
 				break;
 				
 			case 3:
@@ -71,7 +71,7 @@ public class CentreSwitchLeft extends AutoMode {
 				return Drivetrain.getInstance().getEncoderWithinDistance(3.0, 0.1);
 				
 			case 2:
-				return Drivetrain.getInstance().getEncoderWithinDistance(3.75, 0.1) || DriverStation.getInstance().getMatchTime() < 5.0;
+				return Drivetrain.getInstance().getEncoderWithinDistance(3.6, 0.1) || DriverStation.getInstance().getMatchTime() < 5.0;
 				
 			default:
 				return false;

@@ -75,7 +75,7 @@ public class Drivetrain extends Subsystem {
 		mRightSlaveB = new TalonSRX(Constants.kRightDriveSlaveB);	// CIM
 		
 		mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		mRightMaster.setSensorPhase(true);
+		mRightMaster.setSensorPhase(false);
 		mRightMaster.configOpenloopRamp(Constants.kDriveVoltageRamp, 0);
 		mRightMaster.configContinuousCurrentLimit(40, 0);
 		mRightMaster.configPeakCurrentLimit(60, 0);
@@ -266,7 +266,7 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	public boolean actionGyroTurn(double heading) {
-		double steering = (heading - getAngle()) * Constants.kPGyroSteering;  // .005 for wood
+		double steering = (heading - getAngle()) * Constants.kPGyroSteering;
 		
 		arcadeDrive(0, steering, 1);
 		return getAngleWithinRange(90, 3);

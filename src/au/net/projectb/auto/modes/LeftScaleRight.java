@@ -79,13 +79,15 @@ public class LeftScaleRight extends AutoMode {
 	public boolean getStepIsCompleted(int stepIndex) {
 		
 		switch (stepIndex) {
-			case 0:  // Drive to 5.8m and go to next when the encoder resets
+			case 0:  // Drive to 5.5m and go to next when the encoder resets
 				return Drivetrain.getInstance().getEncoderWithinDistance(5.5, 0.1);
 				
 			case 1:
 				if (Drivetrain.getInstance().getAngleWithinRange(90, 6)) {
 					Drivetrain.getInstance().setEncoderCounts(0);
-					return true;
+					if (Drivetrain.getInstance().getEncoderWithinDistance(0.0, 0.1)) {
+						return true;
+					}
 				}
 				return false;
 				

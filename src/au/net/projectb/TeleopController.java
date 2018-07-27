@@ -134,6 +134,10 @@ public class TeleopController {
 				currentState = SuperstructureState.STOWED;
 		}
 		
+		if (xbox.getBumper(Hand.kLeft)) {
+			intake.zeroWristEncoder();
+		}
+		
 		// Lift Control
 		double xboxElbowManualPower = -xbox.getY(Hand.kLeft);
 		if (Math.abs(xboxElbowManualPower) > Constants.kElbowManualDeadzone || xbox.getBumper(Hand.kRight)) {
